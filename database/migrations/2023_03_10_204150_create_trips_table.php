@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('bus_id')->unsigned();
             $table->dateTime('end_at');
             $table->dateTime('start_at');
-            $table->double('seat_price');
             $table->timestamps();
         });
     }

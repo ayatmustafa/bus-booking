@@ -13,6 +13,6 @@ class BusTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Bus::factory()->count(50)->create();
+        Bus::factory()->count(20)->create();
     }
 }

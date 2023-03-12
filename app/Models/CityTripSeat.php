@@ -11,4 +11,8 @@ class CityTripSeat extends Model
     protected $fillable = [
         'user_id', 'seat_number', 'city_trip_id'
     ];
+    public function cityTrip()
+    {
+        return $this->belongsTo(CityTrip::class, 'city_trip_id');
+    }
 }

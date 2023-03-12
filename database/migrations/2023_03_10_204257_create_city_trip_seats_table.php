@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('city_trip_seats', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->nullable();
             $table->integer('seat_number');
             $table->integer('city_trip_id')->unsigned();
             $table->timestamps();
