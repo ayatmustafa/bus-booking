@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CityTrip;
+use App\Models\CityTripSeat;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,6 +16,22 @@ class BookingRequest extends FormRequest
     {
         return true;
     }
+    protected function prepareForValidation(): void
+    {
+        $data = $this->all();
+        $data['order_start_station'] = CityTrip::where('trip_id', $this->trip_id)
+            ->where('city_id', $this->start_station)->first()->order;
+        $data['order_end_station'] = CityTrip::where('trip_id', $this->trip_id)
+            ->where('city_id', $this->end_station)->first()->order;
+        $data['not_available_seat_number'] = CityTripSeat::whereHas('userReservation')->where('seat_number', $this->seat_number)
+            ->whereHas('cityTrip', function ($q) use ($data) {
+                $q->whereIn('order', range($data['order_start_station'], $data['order_end_station']))
+                    ->where('trip_id', $this->trip_id);
+            })->count()==0?"available":"not available";
+          
+        $this->replace($data);
+    }
+
 
     /**
      * Get the validation rules that apply to the request.
@@ -44,6 +62,14 @@ class BookingRequest extends FormRequest
                 'required',
                 'numeric'
             ],
+            "not_available_seat_number"=>['in:available']
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'not_available_seat_number' => 'not available to book this seat number'
         ];
     }
 }

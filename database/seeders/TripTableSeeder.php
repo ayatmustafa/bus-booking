@@ -17,7 +17,7 @@ class TripTableSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             $start_at = Carbon::createFromTimestamp(fake()->dateTimeBetween($startDate = '+' . $i . ' days', $endDate = '+' . $i + 2 . ' days')->getTimeStamp());
             $trip = Trip::create([
                 'name' => Str::random(10),
@@ -42,7 +42,8 @@ class TripTableSeeder extends Seeder
 
             foreach ($city_trip_ids as $city_trip_id) {
                 for ($j = 1; $j <= 12; $j++) {
-                    CityTripSeat::create(['city_trip_id' => $city_trip_id, 'seat_number' => $j, 'user_id' => null]);
+                    $city_trip_seat =  CityTripSeat::create(['city_trip_id' => $city_trip_id, 'seat_number' => $j]);
+                   // $city_trip_seat->reservation()->create(['user_id' => User::all()->random()->id]);
                 }
             }
         }

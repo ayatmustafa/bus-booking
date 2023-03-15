@@ -9,10 +9,18 @@ class CityTripSeat extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id', 'seat_number', 'city_trip_id'
+        'seat_number', 'city_trip_id'
     ];
     public function cityTrip()
     {
         return $this->belongsTo(CityTrip::class, 'city_trip_id');
+    }
+    public function reservation()
+    {
+        return $this->hasMany(Reservation::class, 'city_trip_seat_id');
+    }
+    public function userReservation()
+    {
+        return $this->belongsToMany(User::class, 'reservations', 'city_trip_seat_id', 'user_id')->withTimestamps();
     }
 }

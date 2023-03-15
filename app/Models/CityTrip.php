@@ -15,8 +15,8 @@ class CityTrip extends Model
     {
         return $this->hasMany(CityTripSeat::class, 'city_trip_id');
     }
-    public  function availableTripSeats()
+    public  function trip()
     {
-        return $this->hasMany(CityTripSeat::class, 'city_trip_id')->whereNull('user_id');
+        return $this->belongsTo(Trip::class, 'trip_id');
     }
 }

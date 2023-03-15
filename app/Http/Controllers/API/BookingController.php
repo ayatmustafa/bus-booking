@@ -18,34 +18,13 @@ class BookingController extends Controller
      */
     public function getAvailableSeats(GetAvailableSeatsRequest $request)
     {
-        $trips =  Trip::query();
-        foreach ((clone $trips->get()) as $k => $trip) {
-            $data[$k]['trip'] = $trip;
-            $orderOfStartStation = optional($trip->cities->pluck('pivot')->where('city_id', $request->start_station)->first())->order;
-            $orderOfEndStation = optional($trip->cities->pluck('pivot')->where('city_id', $request->end_station)->first())->order;
-
-            if ($orderOfEndStation > $orderOfStartStation) {
-                $CityTrip = CityTrip::with('tripSeats')->where('trip_id', $trip->id)
-                    ->whereBetween('order', [$orderOfStartStation, $orderOfEndStation])->get();
-
-                $CityTripIds = (clone $CityTrip)->pluck('id');
-                for ($i = 1; $i <= 12; $i++) {
-                    $notAvailableSeat = CityTripSeat::whereIn('city_trip_id', $CityTripIds)
-                        ->where('seat_number', $i)->whereNotNull('user_id');
-
-                    if ((clone $notAvailableSeat)->get()->count() == 0) {
-
-                        $availableSeats[] = $i;
-                    }
-                }
-                $data[$k]["seats"] = $availableSeats;
-            }
-        }
+        return Trip::with('cityTrip.tripSeats.reservation')
+                ->whereDoesntHave('cityTrip.tripSeats.reservation')->get();
 
         return response()->json([
             'status' => true,
             'message' => 'all available trips data',
-            'data' => $data,
+            //'data' => $data,
         ], 200);
     }
 
@@ -54,24 +33,21 @@ class BookingController extends Controller
      */
     public function booking(BookingRequest $request)
     {
-        $cityTrip =  CityTrip::where('trip_id', $request->trip_id)->whereHas('availableTripSeats');
-        $orderOfStartStation = optional((clone $cityTrip)->where('city_id', $request->start_station)->first())->order;
-        $orderOfEndStation = optional((clone $cityTrip)->where('city_id', $request->end_station)->first())->order;
+        $data = CityTripSeat::with(['cityTrip', 'reservation', 'userReservation'])
+        ->where('seat_number', $request->seat_number)
+        ->whereHas('cityTrip', function($q) use($request){
+            $q->whereIn('order', range($request->order_start_station, $request->order_end_station))
+                ->where('trip_id', $request->trip_id);
+        })->get(); 
 
-        if ($orderOfEndStation > $orderOfStartStation) {
-            $data = CityTripSeat::with('cityTrip')->whereNull('user_id')->where('seat_number', $request->seat_number)
-                ->whereHas('cityTrip', function ($q) use ($orderOfEndStation, $orderOfStartStation, $request) {
-                    $q->whereBetween('order', [$orderOfStartStation, $orderOfEndStation])
-                        ->where('trip_id', $request->trip_id);
-                })->update(['user_id' => auth()->id()]);
+        $data->map(function ($item) {
+           $item->userReservation()->sync([auth()->id()]);
+        });
 
-            return response()->json([
-                'status' => true,
-                'message' => 'booking done successfully',
-                'data' => $data,
-            ], 200);
-        }
-
-        throw new ExceptionMessage("not available to book this seat");
+        return response()->json([
+            'status' => true,
+            'message' => 'booking done successfully',
+            'data' => $data,
+        ], 200);     
     }
 }

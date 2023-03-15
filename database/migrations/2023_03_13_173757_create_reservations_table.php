@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('city_trip_seats', function (Blueprint $table) {
+        Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->integer('seat_number');
-            $table->integer('city_trip_id')->unsigned();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('city_trip_seat_id')->unsigned()->nullable();
+            $table->string('status')->default('ongoing')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('city_trip_seats');
+        Schema::dropIfExists('reservations');
     }
 };
