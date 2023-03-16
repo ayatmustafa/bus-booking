@@ -19,19 +19,17 @@ class BookingRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $data = $this->all();
-        $data['order_start_station'] = CityTrip::where('trip_id', $this->trip_id)
-            ->where('city_id', $this->start_station)->first()->order;
-        $data['order_end_station'] = CityTrip::where('trip_id', $this->trip_id)
-            ->where('city_id', $this->end_station)->first()->order;
-        $data['not_available_seat_number'] = CityTripSeat::whereHas('userReservation')->where('seat_number', $this->seat_number)
+        $data['order_start_station'] = optional(CityTrip::where('trip_id', $this->trip_id)
+                ->where('city_id', $this->start_station)->first())->order;
+        $data['order_end_station'] = optional(CityTrip::where('trip_id', $this->trip_id)
+                ->where('city_id', $this->end_station)->first())->order;
+        $data['not_available_seat_number'] = CityTripSeat::where('seat_number', $this->seat_number)
             ->whereHas('cityTrip', function ($q) use ($data) {
                 $q->whereIn('order', range($data['order_start_station'], $data['order_end_station']))
                     ->where('trip_id', $this->trip_id);
-            })->count()==0?"available":"not available";
-          
+            })->whereHas('userReservation')->count() == 0 ? "available" : "not available";
         $this->replace($data);
     }
-
 
     /**
      * Get the validation rules that apply to the request.
@@ -41,35 +39,35 @@ class BookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "start_station" => [
+            'start_station' => [
                 'required',
                 'numeric',
                 Rule::exists('city_trips', 'city_id')
-                    ->where('trip_id', $this->trip_id)
+                    ->where('trip_id', $this->trip_id),
             ],
-            "end_station" => [
+            'end_station' => [
                 'required',
                 'numeric',
                 Rule::exists('city_trips', 'city_id')
-                    ->where('trip_id', $this->trip_id)
+                    ->where('trip_id', $this->trip_id),
             ],
-            "trip_id" => [
+            'trip_id' => [
                 'required',
                 'numeric',
-                Rule::exists('city_trips', 'trip_id')
+                Rule::exists('city_trips', 'trip_id'),
             ],
-            "seat_number" => [
+            'seat_number' => [
                 'required',
-                'numeric'
+                'numeric',
             ],
-            "not_available_seat_number"=>['in:available']
+            'not_available_seat_number' => ['in:available'],
         ];
     }
 
     public function messages()
     {
         return [
-            'not_available_seat_number' => 'not available to book this seat number'
+            'not_available_seat_number' => 'not available to book this seat number',
         ];
     }
 }

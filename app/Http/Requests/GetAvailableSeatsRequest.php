@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetAvailableSeatsRequest extends FormRequest
@@ -22,8 +23,16 @@ class GetAvailableSeatsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "start_station" => 'required|numeric',
-            "end_station" => 'required|numeric'
+            "start_station" => [
+                'required',
+                'numeric',
+                Rule::exists('city_trips', 'city_id')
+            ],
+            "end_station" => [
+                'required',
+                'numeric',
+                Rule::exists('city_trips', 'city_id')
+            ],
         ];
     }
 }

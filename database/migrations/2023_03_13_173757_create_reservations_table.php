@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id')->unsigned()->nullable();
             $table->integer('city_trip_seat_id')->unsigned()->nullable();
-            $table->string('status')->default('ongoing')->nullable();
             $table->timestamps();
         });
     }

@@ -13,6 +13,6 @@ Route::post('login', [PassportAuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::get('logout', [PassportAuthController::class, 'logout']);
     Route::get('get-user', [PassportAuthController::class, 'userInfo']);
-    Route::post('get-available-seats', [BookingController::class, 'getAvailableSeats']);
+    Route::get('get-available-seats', [BookingController::class, 'getAvailableSeats']);
     Route::post('booking-seat', [BookingController::class, 'booking']);
 });
