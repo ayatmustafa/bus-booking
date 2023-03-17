@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PassportAuthController extends Controller
 {
@@ -32,7 +32,7 @@ class PassportAuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        $token = $user->createToken('Laravel10PassportAuth')->accessToken;
+        $token = $user->generateToken();
 
         return response()->json(['token' => $token, 'user' => $user], 200);
     }
@@ -48,7 +48,7 @@ class PassportAuthController extends Controller
         ];
 
         if (auth()->attempt($data)) {
-            $token = auth()->user()->createToken('Laravel10PassportAuth')->accessToken;
+            $token = auth()->user()->generateToken();
 
             return response()->json(['token' => $token], 200);
         } else {

@@ -20,7 +20,7 @@ class BookingController extends Controller
      */
     public function getAvailableSeats(GetAvailableSeatsRequest $request)
     {
-        $data =  $this->bookingService->getAvailableSeats($request);
+        $data = $this->bookingService->getAvailableSeats($request);
 
         return response()->json([
             'status' => true,

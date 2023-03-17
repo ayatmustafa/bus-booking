@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use App\Models\CityTrip;
 use App\Models\CityTripSeat;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class BookingRequest extends FormRequest
 {
