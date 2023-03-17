@@ -28,7 +28,7 @@ class BookingRequest extends FormRequest
         })->whereHas('cityTrip', function ($q) use ($data) {
             $q->whereIn('order', range($data['order_start_station'], $data['order_end_station']))
                 ->where('trip_id', $this->trip_id);
-        })->whereHas('userReservation')->count() == 0 ? "available" : "not available";
+        })->whereHas('reservation')->count() == 0 ? "available" : "not available";
         $this->replace($data);
     }
 

@@ -14,6 +14,13 @@ class AvailableSeatsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'trip_id' => $this->id,
+            'trip_name' => $this->name,
+            'start_at' => $this->start_at,
+            'end_at' => $this->end_at,
+            'bus_details' => new BusResource($this->bus),
+            'available_seats' => $this->cityTrip->first()->tripSeats->pluck('seat')
+        ];
     }
 }

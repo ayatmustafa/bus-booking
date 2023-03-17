@@ -17,11 +17,7 @@ class CityTripSeat extends Model
     }
     public function reservation()
     {
-        return $this->hasMany(Reservation::class, 'city_trip_seat_id');
-    }
-    public function userReservation()
-    {
-        return $this->belongsToMany(User::class, 'reservations', 'city_trip_seat_id', 'user_id')->withTimestamps();
+        return $this->hasOne(Reservation::class, 'city_trip_seat_id');
     }
     public function seat()
     {

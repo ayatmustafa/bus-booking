@@ -7,6 +7,7 @@ use App\Models\CityTripSeat;
 use Illuminate\Routing\Controller;
 use App\Http\Requests\BookingRequest;
 use App\Http\Requests\GetAvailableSeatsRequest;
+use App\Http\Resources\AvailableSeatsCollection;
 
 class BookingController extends Controller
 {
@@ -15,19 +16,19 @@ class BookingController extends Controller
      */
     public function getAvailableSeats(GetAvailableSeatsRequest $request)
     {
-        $data = Trip::with(['cityTrip.tripSeats' => function ($q) {
+        $data = Trip::with(['bus', 'cityTrip.tripSeats' => function ($q) {
             $q->whereDoesntHave('reservation');
         }, 'cityTrip.tripSeats.seat'])->whereHas('cityTrip', function ($q) use ($request) {
             $q->whereBetween('city_id', [$request->start_station, $request->end_station])
                 ->whereHas('tripSeats', function ($query) {
                     $query->whereDoesntHave('reservation');
                 });
-        })->get();
+        })->paginate(15);
 
         return response()->json([
             'status' => true,
             'message' => 'All Available Trips Data',
-            'data' => $data,
+            'data' => new AvailableSeatsCollection($data),
         ], 200);
     }
 
@@ -45,7 +46,7 @@ class BookingController extends Controller
                     ->where('trip_id', $request->trip_id);
             })->get();
         $data->map(function ($item) {
-            $item->userReservation()->sync([auth()->id()], false);
+            $item->reservation()->create(['user_id' => auth()->id()], false);
         });
 
         return response()->json([

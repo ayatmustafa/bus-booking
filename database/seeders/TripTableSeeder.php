@@ -24,7 +24,7 @@ class TripTableSeeder extends Seeder
                 'name' => Str::random(10),
                 'driver_id' => User::all()->random()->id,
                 'creator_id' => User::all()->random()->id,
-                'bus_id' => Bus::all()->random()->id,
+                'bus_id' => $i,
                 'start_at' => $start_at,
                 'end_at' => Carbon::createFromFormat('Y-m-d H:i:s', $start_at)->addHours(15),
             ]);
