@@ -37,12 +37,14 @@ class BookingController extends Controller
     public function booking(BookingRequest $request)
     {
         $data = CityTripSeat::with(['cityTrip'])
-            ->where('seat_number', $request->seat_number)
+            // ->whereHas('seat', function ($query) use ($request) {
+            //     $query->where('seat_number', $request->seat_number);
+            // })
             ->whereHas('cityTrip', function ($q) use ($request) {
                 $q->whereIn('order', range($request->order_start_station, $request->order_end_station - 1))
                     ->where('trip_id', $request->trip_id);
             })->get();
-
+        return $data;
         $data->map(function ($item) {
             $item->userReservation()->sync([auth()->id()], false);
         });

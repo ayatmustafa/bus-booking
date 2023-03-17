@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Bus;
 use App\Models\CityTripSeat;
+use App\Models\Seat;
 use App\Models\Trip;
 use App\Models\User;
 use Carbon\Carbon;
@@ -42,8 +43,11 @@ class TripTableSeeder extends Seeder
 
             foreach ($city_trip_ids as $city_trip_id) {
                 for ($j = 1; $j <= 12; $j++) {
-                    $city_trip_seat =  CityTripSeat::create(['city_trip_id' => $city_trip_id, 'seat_number' => $j]);
-                   // $city_trip_seat->reservation()->create(['user_id' => User::all()->random()->id]);
+                    $city_trip_seat =  CityTripSeat::firstOrCreate([
+                        'city_trip_id' => $city_trip_id,
+                        'seat_id' => Seat::where('seat_number', $j . '_' . $trip->bus_id)->first()->id
+                    ]);
+                    // $city_trip_seat->reservation()->create(['user_id' => User::all()->random()->id]);
                 }
             }
         }

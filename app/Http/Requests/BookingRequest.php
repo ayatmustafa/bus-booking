@@ -20,9 +20,9 @@ class BookingRequest extends FormRequest
     {
         $data = $this->all();
         $data['order_start_station'] = optional(CityTrip::where('trip_id', $this->trip_id)
-                ->where('city_id', $this->start_station)->first())->order;
+            ->where('city_id', $this->start_station)->first())->order;
         $data['order_end_station'] = optional(CityTrip::where('trip_id', $this->trip_id)
-                ->where('city_id', $this->end_station)->first())->order;
+            ->where('city_id', $this->end_station)->first())->order;
         $data['not_available_seat_number'] = CityTripSeat::where('seat_number', $this->seat_number)
             ->whereHas('cityTrip', function ($q) use ($data) {
                 $q->whereIn('order', range($data['order_start_station'], $data['order_end_station']))
@@ -58,7 +58,6 @@ class BookingRequest extends FormRequest
             ],
             'seat_number' => [
                 'required',
-                'numeric',
             ],
             'not_available_seat_number' => ['in:available'],
         ];
