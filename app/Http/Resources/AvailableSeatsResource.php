@@ -20,7 +20,8 @@ class AvailableSeatsResource extends JsonResource
             'start_at' => $this->start_at,
             'end_at' => $this->end_at,
             'bus_details' => new BusResource($this->bus),
-            'available_seats' => $this->cityTrip->first()->tripSeats->pluck('seat')
+            'cities_details' => CityTripResource::collection($this->cityTrip),
+            'available_seats' => SeatResource::collection($this->cityTrip->first()->tripSeats->pluck('seat'))
         ];
     }
 }

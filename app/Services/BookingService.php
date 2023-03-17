@@ -10,7 +10,9 @@ class BookingService
 {
     public function getAvailableSeats($request)
     {
-        return Trip::with(['bus', 'cityTrip.tripSeats' => function ($q) {
+        return Trip::with(['bus', 'cityTrip' => function ($q) use ($request) {
+            $q->whereBetween('city_id', [$request->start_station, $request->end_station])->with('city');
+        }, 'cityTrip.tripSeats' => function ($q) {
             $q->whereDoesntHave('reservation');
         }, 'cityTrip.tripSeats.seat'])->whereHas('cityTrip', function ($q) use ($request) {
             $q->whereBetween('city_id', [$request->start_station, $request->end_station])

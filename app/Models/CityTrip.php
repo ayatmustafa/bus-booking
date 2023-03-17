@@ -19,4 +19,8 @@ class CityTrip extends Model
     {
         return $this->belongsTo(Trip::class, 'trip_id');
     }
+    public  function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
 }
