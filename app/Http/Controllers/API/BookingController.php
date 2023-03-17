@@ -17,7 +17,7 @@ class BookingController extends Controller
     {
         $data = Trip::with(['cityTrip.tripSeats' => function ($q) {
             $q->whereDoesntHave('reservation');
-        }])->whereHas('cityTrip', function ($q) use ($request) {
+        }, 'cityTrip.tripSeats.seat'])->whereHas('cityTrip', function ($q) use ($request) {
             $q->whereBetween('city_id', [$request->start_station, $request->end_station])
                 ->whereHas('tripSeats', function ($query) {
                     $query->whereDoesntHave('reservation');
@@ -37,14 +37,13 @@ class BookingController extends Controller
     public function booking(BookingRequest $request)
     {
         $data = CityTripSeat::with(['cityTrip'])
-            // ->whereHas('seat', function ($query) use ($request) {
-            //     $query->where('seat_number', $request->seat_number);
-            // })
+            ->whereHas('seat', function ($query) use ($request) {
+                $query->where('seat_number', $request->seat_number);
+            })
             ->whereHas('cityTrip', function ($q) use ($request) {
                 $q->whereIn('order', range($request->order_start_station, $request->order_end_station - 1))
                     ->where('trip_id', $request->trip_id);
             })->get();
-        return $data;
         $data->map(function ($item) {
             $item->userReservation()->sync([auth()->id()], false);
         });
