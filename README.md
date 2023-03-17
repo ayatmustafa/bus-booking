@@ -1,66 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## About task
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Task Description
+Robusta studio wants to build a fleet-management system (bus-booking system) Having:
+1- Egypt cities as stations [Cairo, Giza, AlFayyum, AlMinya, Asyut...]
+2- Predefined trips between 2 stations that cross over in-between stations.
+ex: Cairo to Asyut trip that crosses over AlFayyum -firstly- then AlMinya.
+3- Bus for each trip, each bus has 12 available seats to be booked by users, each seat has an
+unique id.
+4- Users can book an available trip seat.
+For example we have Cairo-Asyut trip that crosses over AlFayyum -firstly- then AlMinya:
+any user can book a seat for any of these criteria
+(Cairo to AlFayyum), (Cairo to AlMinya), (Cairo to Asyut),
+(AlFayyum to AlMinya), (AlFayyum to Asyut) or
+(AlMinya to Asyut)
+if there is an available seat, taking into consideration if the bus is full from Cairo to
+AlMinya, the user cannot book any seat from AlFayyum but he can book from AlMinya.
+We require the following:
+Implement a solution for this case using a Relational-Database and Laravel web app that
+provides 2 APIs for any consumer(ex: web app, mobile app,...)
+● User can book a seat if there is an available seat.
+● User can get a list of available seats to be booked for his trip by sending start and end
+stations.
+** Bonus: Implement proper unit tests are available.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<h2 align="center"><a href="https://documenter.getpostman.com/view/9536988/2s93JzKLEQ" target="_blank">Postman Documentation</a></h2>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
+php 8.2
+mysql 
+apache server
+SQLite for testing
+### What We Need To Run Task 
+- Clone the project 
+- Run (composer install) 
+- Run npm install
+- Run  (cp .env.example .env)  to generate .env
+- Open .env and add setting of data base that in project in database folder 
+- Run php artisan key:generate
+- Run php artisan migrate:fresh --seed
+- Run php artisan passport:install
+- Run php artisan optimize:clear
+- Run php artisan serve
+- Run sudo apt-get install php8.2-sqlite3
+- Run php artisan test
+### endpoints 
+- register:
+ /api/register
+ post method
+{
+    "name":"test",
+    "email":"test@gmail.com",
+    "password":"12345678"
+}
+- login:
+ /api/login
+ post method
+{
+     "email":"test@gmail.com",
+    "password":"12345678"
+}
+- get available seats between two stations
+/api/get-available-seats g
+get method 
+{
+    "start_station":1,
+    "end_station":2
+}
+- book specific seat in specific trip
+/api/booking-seat
+post method
+{
+    "seat_number":"2_1",
+    "start_station":5,
+    "end_station":7,
+    "trip_id":1
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+}
+- logout
+api/logout
